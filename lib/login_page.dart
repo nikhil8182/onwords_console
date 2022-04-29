@@ -7,11 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:onwords_console/homePage.dart';
+import 'package:onwords_console/staff_validation_page.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'data_page.dart';
 
 
 
@@ -235,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
 
     // Timer.periodic(Duration(seconds: 1), (Timer t) => getTime());
-    //check_if_already_login();
+    // check_if_already_login();
 
     email = TextEditingController();
     pass = TextEditingController();
@@ -250,8 +249,8 @@ class _LoginPageState extends State<LoginPage> {
     newUser = (loginData.getBool('login') ?? true);
     // print(newUser);
     if (newUser == false) {
-      // Navigator.pushReplacement(
-      //     context, new MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const StaffValidationPage()));
     }
   }
 
@@ -435,7 +434,7 @@ class _LoginPageState extends State<LoginPage> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomePage()));
+                                                  const StaffValidationPage()));
                                     });
                                   } catch (e) {
                                     setState(() {

@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
                         staffName.add(data['name']);
                         to.add(data['to']);
                         from.add(data['from']);
-                        time_in_hours.add(data['time in hours']);
+                        time_in_hours.add(data['time_in_hours']);
                         workDone.add(data['workDone']);
                         workPrecentage.add(data['workPercentage']);
                       });
@@ -182,12 +182,17 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            title: Text("WorkDone-Data--${combination.split(' ')[0]}"),
+            backgroundColor: Colors.orange,
+            title: combination.split(' ')[0] != " " ?Text("Date : ${combination.split(' ')[0]}"):const Text("WorkDone Data"),
             actions: [
               ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.orange)
+                  ),
                   onPressed: (){
                     combination = " ";
                     _selectDate(context);
@@ -259,77 +264,46 @@ class _MyAppState extends State<MyApp> {
           //                   mainAxisSpacing: 4.0),
           //           children: listTile);
           // }
-          body: loader ?GridView.builder(
+          body: loader ? GridView.builder(
             itemCount: staffName.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 4.0,
-                mainAxisSpacing: 4.0),
+                crossAxisSpacing: 1.0,
+                mainAxisSpacing: 1.0),
             itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                  onTap: () {
-                    // turnOffTheHueLight(lightId[index], !lightState[index]);
-                  },
-                  child: Container(
-                      margin: EdgeInsets.all(10.0),
-                      padding: EdgeInsets.symmetric(horizontal: 13.0,vertical: 18.0),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(25.0),
-                        // border: Border.all(color: Colors.red)
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              return Container(
+                  margin: const EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0,vertical: 18.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(25.0),
+                    // border: Border.all(color: Colors.red)
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(staffName[index],textAlign: TextAlign.left,),
-                                Text(workPrecentage[index]??" ")
-                              ],
-                            ),
-                            Text("From : ${from[index]}",textAlign: TextAlign.left,),
-                            Text("To : ${to[index]}",textAlign: TextAlign.left,),
-                            Text("Time_in_hours : ${time_in_hours[index]}",textAlign: TextAlign.left,),
-                            Text("WorkDone : ${workDone[index]}",textAlign: TextAlign.left,),
+                            Text(staffName[index],textAlign: TextAlign.left,style: const TextStyle(fontWeight: FontWeight.bold),),
+                            Text(workPrecentage[index]??" ")
                           ],
                         ),
-                      )));
+                        SizedBox(
+                          height: height*0.010,
+                        ),
+                        Text("From : ${from[index]}",textAlign: TextAlign.left,),
+                        Text("To : ${to[index]}",textAlign: TextAlign.left,),
+                        Text("Time_in_hours : ${time_in_hours[index]}",textAlign: TextAlign.left,),
+                        Text("WorkDone : ${workDone[index]}",textAlign: TextAlign.left,),
+                      ],
+                    ),
+                  ));
             },
-          ):Container(
-            child: Center(child: Text(loading),),
-          )
+          ):Center(child: Text(loading),)
       ),
     );
   }
 }
 
-class Tutorial {
-  final String password;
-  final String name;
-  final String email;
-  final String dept;
-  final User author;//workmanager
-  Tutorial(this.name,this.password, this.dept,this.email,this.author);
-  factory Tutorial.fromJson(dynamic json) {
-    return Tutorial(json['name'] as String, json['password']as String,json['department'] as String, json['email'] as String,User.fromJson(json['author']) ); //User.fromJson(json['author'])
-  }
-  @override
-  String toString() {
-    return '{ ${this.name}, ${this.password}, ${this.dept} , ${this.email} , ${this.author}';
-  }
-}
-
-class User {
-  String name;
-  int age;
-  User(this.name, this.age);
-  factory User.fromJson(dynamic json) {
-    return User(json['name'] as String, json['age'] as int);
-  }
-  @override
-  String toString() {
-    return '{ ${this.name}, ${this.age} }';
-  }
-}

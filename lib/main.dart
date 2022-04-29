@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:onwords_console/homePage.dart';
 import 'package:onwords_console/login_page.dart';
+import 'package:onwords_console/splashScreen.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 
@@ -26,9 +26,9 @@ class Appis extends StatefulWidget {
 class _AppisState extends State<Appis> {
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport.global(
+    return const OverlaySupport.global(
         child: MaterialApp(
-         home: LoginPage(),
+         home: SplashScreenPage(),
           debugShowCheckedModeBanner: false,
         ),
     );

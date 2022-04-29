@@ -1,202 +1,3 @@
-// import 'dart:async';
-//
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_database/firebase_database.dart';
-// import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-//
-//
-// FirebaseAuth auth = FirebaseAuth.instance;
-// final databaseReference = FirebaseDatabase.instance.reference();
-//
-// class SchedulePage extends StatefulWidget {
-//   const SchedulePage({Key key}) : super(key: key);
-//
-//   @override
-//   _SchedulePageState createState() => _SchedulePageState();
-// }
-//
-// class _SchedulePageState extends State<SchedulePage> {
-//
-//   var scenesData;
-//   List scheduleName = [];
-//   List selectedRoutine =[];
-//   Timer timer;
-//   int id = 0;
-//   bool validate = false;
-//   bool loader = false;
-//   SharedPreferences loginData;
-//   String authKey = " ";
-//   var personalDataJson;
-//   bool vibrate = false;
-//
-//
-//   initial() async
-//   {
-//     loginData = await SharedPreferences.getInstance();
-//     setState(() {
-//       vibrate = loginData.get('vibrationStatus')??false;
-//       authKey = loginData.getString('ownerId')??" ";
-//     });
-//   }
-//
-//
-//   getData() async {
-//     await databaseReference.child(authKey).once().then((value) {
-//       scheduleName.clear();
-//       var dataJson;
-//
-//       setState(() {
-//         loader = true;
-//         dataJson = value.snapshot.value;
-//         scenesData = value.snapshot.value;
-//       });
-//
-//       // Map<dynamic, dynamic> values = value.value['SmartHome']['scenes'];
-//       Map<dynamic, dynamic> values = dataJson['SmartHome']['schedule'];
-//       values.forEach((key, values) {
-//         scheduleName.add(values);
-//       });
-//
-//
-//     });
-//   }
-//
-//   @override
-//   void initState() {
-//     initial();
-//     timer = Timer.periodic(Duration(seconds: 3), (Timer t) {
-//       getData();
-//       //   // getName();
-//     });
-//     super.initState();
-//   }
-//
-//   @override
-//   void dispose() {
-//     timer?.cancel();
-//     // TODO: implement dispose
-//     super.dispose();
-//   }
-//
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final height = MediaQuery.of(context).size.height;
-//     return Scaffold(
-//       backgroundColor: Theme.of(context).backgroundColor,
-//       appBar: AppBar(
-//         title: Text("Schedule Page" ,style: Theme.of(context).textTheme.headline5,),
-//       ),
-//       body: Container(
-//         padding: EdgeInsets.fromLTRB(10.0, 70.0, 10.0, 20.0),
-//         child: loader ? GridView.builder(
-//           scrollDirection: Axis.vertical,
-//           itemCount: scheduleName.length, //scenesData.length?? scenesName.length
-//           itemBuilder: (BuildContext context, int index) {
-//             return GestureDetector(
-//               onLongPress: ()async{
-//                 showAnotherAlertDialog(context, index);
-//               },
-//               child: Container(
-//                 margin: EdgeInsets.all(10.0),
-//                 padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 15.0),
-//                 // height: height * 0.15,
-//                 // width: width * 0.30,
-//                 decoration: BoxDecoration(
-//                   //color: Color.fromRGBO(54, 54, 54, 1.0),
-//                     color: Theme.of(context).canvasColor,
-//                     borderRadius: BorderRadius.circular(25.0)),
-//                 child: SingleChildScrollView(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       SizedBox(
-//                         height: height * 0.020,
-//                       ),
-//                       Text('''Name : ${scheduleName[index]['ScheduleName']}''',
-//                           style: Theme.of(context).textTheme.bodyText2,
-//                           textAlign: TextAlign.left),
-//                       SizedBox(
-//                         height: height * 0.010,
-//                       ),
-//                       Text('''Date : ${scheduleName[index]['date']}''',
-//                           style: Theme.of(context).textTheme.bodyText2,
-//                           textAlign: TextAlign.left),
-//                       SizedBox(
-//                         height: height * 0.010,
-//                       ),
-//                       Text('''Time : ${scheduleName[index]['time']}hrs''',
-//                           style: Theme.of(context).textTheme.bodyText2,
-//                           textAlign: TextAlign.left),
-//                       SizedBox(
-//                         height: height * 0.010,
-//                       ),
-//                       Text('''Routines :  ${scheduleName[index]['selectedRoutines'].toString()
-//                           .replaceAll(RegExp("[\\p{Ps}\\p{Pe}]", unicode: true), "")}''',
-//                           style: Theme.of(context).textTheme.bodyText2,
-//                           textAlign: TextAlign.left,),
-//
-//                       Text('''Time : ${scheduleName[index]['status'] == true?"Completed":"Yet to Happen"}''',
-//                           style: Theme.of(context).textTheme.bodyText2,
-//                           textAlign: TextAlign.left),
-//
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             );
-//           },
-//           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//             crossAxisCount: 2,
-//           ),
-//         ): Center(
-//           child: CircularProgressIndicator(
-//             backgroundColor: Colors.black,
-//             valueColor:
-//             new AlwaysStoppedAnimation<Color>(
-//                 Colors.white),
-//           ),
-//         )
-//       ),
-//     );
-//   }
-//   showAnotherAlertDialog(BuildContext context,index) {
-//     // Create button
-//     Widget cancelButton = TextButton(
-//       child: Text("cancel"),
-//       onPressed: (){
-//         Navigator.pop(context, false);
-//       },
-//     );
-//     Widget okButton = TextButton(
-//       child: Text("ok"),
-//       onPressed: (){
-//         databaseReference.child(authKey).child('SmartHome')
-//             .child('schedule').child(scheduleName[index]['ScheduleName']).remove();
-//         Navigator.pop(context, true);
-//       },
-//     );
-//     // Create AlertDialog
-//     AlertDialog alert = AlertDialog(
-//       backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-//       content: Text("Do you really want to delete this schedule ? ",style: Theme.of(context).dialogTheme.contentTextStyle,),
-//       actions: [
-//         cancelButton,
-//         okButton,
-//       ],
-//     );
-//
-//     showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return alert ;
-//       },
-//     );
-//   }
-// }
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -211,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 FirebaseAuth auth = FirebaseAuth.instance;
-final databaseReference = FirebaseDatabase.instance.reference();
+final databaseReference = FirebaseDatabase.instance.reference().child('staff');
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -237,7 +38,7 @@ class _HomePageState extends State<HomePage> {
   int day = 0;
   int month = 0;
   int year = 0;
-  String combination = " ";
+  String todaysDate = " ";
   String startTime = " ";
   String endTime = " ";
   FocusNode f1 = FocusNode();
@@ -248,9 +49,19 @@ class _HomePageState extends State<HomePage> {
   late Timer timer;
   bool scheduleStatus= true;
   List existingScheduleName = [];
+  List from = [];
+  List to = [];
+  List workDoneContent = [];
+  List workDonePercentage = [];
+  var data;
   var dataJson;
   var email;
   String name = " ";
+  var workDoneDates;
+  var rootKeyForData;
+  var workManagerKey;
+  var timeSheetKey;
+
 
 
 
@@ -301,7 +112,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         uiStartTime = timeOfDay;
         startTime = uiStartTime.toString().substring(10, 15);
-        combination = currentDate.toString().split(' ')[0];
       });
     }
   }
@@ -333,105 +143,82 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-  fireData() async {
+  readData() async {
+    todaysDate = currentDate.toString().split(' ')[0];
     //print("im at before atlast of firedata");
+    setState(() {
+      to.clear();
+      from.clear();
+      workDoneContent.clear();
+      workDonePercentage.clear();
+    });
     databaseReference.once().then((value) async {
       dataJson = value.snapshot.value;
         for (var element in value.snapshot.children) {
-          for (var ele in element.children) {
-            email = ele.value;
-            if( email['email'] == auth.currentUser?.email){
-              setState(() {
-                name = email['name'];
-              });
+          email = element.value;
+          if( email['email'] == auth.currentUser?.email){
+            setState(() {
+              name = email['name'];
+            });
+            for (var ele in element.children) {
               for (var el in ele.children) {
                 for (var e in el.children) {
-                  print(e.value);
+                  if(e.key == todaysDate){
+                    for (var val in e.children) {
+                      data = val.value;
+                      setState(() {
+                        to.add(data['to']);
+                        from.add(data['from']);
+                        workDoneContent.add(data['workDone']);
+                        workDonePercentage.add(data['workPercentage']);
+                      });
+                    }
+                  }
                 }
               }
             }
           }
         }
-      // Map<dynamic, dynamic> values = value.snapshot.value as Map;
-      // values.forEach((key,values) {
-      //   // print(key);
-      //   // print(".............>>>>>");
-      //   // print(values);
-      //   // print(values["workManager"]);
-      //   // list.add(values['name']);
-      //   setState(() {
-      //     if(values['name'] != null){
-      //       staffName.add(values['name']);
-      //     }
-      //     workManager.add(values["workManager"]);
-      //   });
-      // });
-      ///
-      // print(workManager);
-      // print(workManager);
-      // print(staffName);
-
-      //   var xx = jsonEncode(dataJson);
-      //   var _dataJson = jsonDecode(xx);
-      //   print(_dataJson.length);
-      // // final userdata = new Map<String, dynamic>.from(_dataJson['staff']);
-      // // print(userdata.keys.length);
-      // setState(() {
-      //   nik = _dataJson['staff']['x'].toString();
-      // });
-      // for (var x in _dataJson['staff']['x']){
-      //   print(x);
-      // }
-      // final json = value.snapshot.value as Map<dynamic, dynamic>;
-      // final message = Message.fromJson(json);
-
-
-      // final json = dataJson['staff'] as Map<dynamic, dynamic>;
-      // print(json);
-      // final message = Data.fromJson(json);
-      //
-      // print("message $message");
-      // for(int i =0; i<userdata.keys.length;i++)
-      //   {
-      //     print(userdata);
-      //   }
-
-
-      // Map<dynamic, dynamic> res = _dataJson;
-      // var x =[];
-      // x.add(res);
-      //
-      // print(x.length);
-      // for(var x in res){
-      //   print(x);
-      // }
-      // list.add(res.keys);
-      // print(list);
-
-      // for(int i =0;i<dataJson['staff'].length;i++){
-      //   print(i);
-      //   // print(dataJson[]);
-      // }
-    });
-
-
-
-  }
-
-
-
-  readData(){
-    databaseReference.child(authKey).child('SmartHome').child('schedule').once().then((value){
-      value.snapshot.children.forEach((element) {
-        setState(() {
-          existingScheduleName.add(element.key);
-        });
-      });
     });
   }
+
+
+
+  uploadData(String fromTime, String toTime,String date,Map totalData){
+
+    databaseReference.once().then((value) async {
+      dataJson = value.snapshot.value;
+      for (var element in value.snapshot.children) {
+        email = element.value;
+        if( email['email'] == auth.currentUser?.email){
+          rootKeyForData = element.key;
+          setState(() {
+            name = email['name'];
+          });
+          for (var ele in element.children) {
+            if (ele.key == 'workManager') {
+              workManagerKey = ele.key;
+              for (var el in ele.children) {
+                timeSheetKey = el.key;
+                for (var e in el.children) {
+                  databaseReference.child(rootKeyForData).child(workManagerKey).child(timeSheetKey).child(date).child('$fromTime to $toTime').set(totalData);
+                }
+              }
+            }
+          }
+        }
+      }
+      readData();
+    });
+  }
+
+
+
+
 
   @override
   void initState() {
+    todaysDate = currentDate.toString().split(' ')[0];
     initialData();
     // time();
     // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -543,7 +330,7 @@ class _HomePageState extends State<HomePage> {
                   height: height*0.037,
                 ),
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20.0),
+                  margin: const EdgeInsets.symmetric(horizontal: 20.0),
                   padding: const EdgeInsets.all(8.0),
                   width: width * 0.90,
                   height: height*0.18,
@@ -598,6 +385,7 @@ class _HomePageState extends State<HomePage> {
                         minLines: 1,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
+                          // hintText: "    %",
                           suffix: const Text("%"),
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -617,63 +405,102 @@ class _HomePageState extends State<HomePage> {
                           backgroundColor: MaterialStateProperty.all(Theme.of(context).canvasColor)
                       ),
                       onPressed: (){
+                        setState(() {
+                          workDone.text.isEmpty ? workDoneValidate = true : workDoneValidate = false;
+                          percentage.text.isEmpty ? workPercentValidate = true : workPercentValidate = false;
+                          if (workDoneValidate)
+                          {
+                            showSimpleNotification(
+                              const Text(
+                                "please enter the workDone",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              background: Colors.red,
+                            );
+                          } else if((workDoneValidate == false) && (workPercentValidate == false)){
 
-                        fireData();
-                        // setState(() {
-                        //   workDone.text.isEmpty ? workDoneValidate = true : workDoneValidate = false;
-                        //   percentage.text.isEmpty ? workPercentValidate = true : workPercentValidate = false;
-                        //   if (workDoneValidate)
-                        //   {
-                        //     showSimpleNotification(
-                        //       const Text(
-                        //         "please enter the workDone",
-                        //         style: TextStyle(color: Colors.white),
-                        //       ),
-                        //       background: Colors.red,
-                        //     );
-                        //   } else if((workDoneValidate == false) && (workPercentValidate == false)){
-                        //
-                        //     if((startTime != " ")  && (endTime != " ")){
-                        //
-                        //       var dateFormat = DateFormat('h:ma');
-                        //       DateTime durationStart = dateFormat.parse(uiStartTime.format(context).toString().replaceAll(" ", ""));
-                        //       DateTime durationEnd = dateFormat.parse(uiEndTime.format(context).toString().replaceAll(" ", ""));
-                        //       var differenceInHours = durationEnd.difference(durationStart).toString().split('.')[0];
-                        //       print(differenceInHours);
-                        //       print(endTime);
-                        //       print(startTime);
-                        //
-                        //       var da = {
-                        //         'from': startTime,
-                        //         "to" : endTime,
-                        //         "name": name,
-                        //         "time_in_hours": differenceInHours,
-                        //         "workDone": workDone.text,
-                        //         "workPercentage": percentage.text,
-                        //       };
-                        //       // print(da);
-                        //     }else{
-                        //       showSimpleNotification(
-                        //         const Text(
-                        //           "please choose time",
-                        //           style: TextStyle(color: Colors.white),
-                        //         ),
-                        //         background: Colors.red,
-                        //       );
-                        //     }
-                        //
-                        //
-                        //   } else {
-                        //     showSimpleNotification(
-                        //       const Text(
-                        //         "please percentage",
-                        //         style: TextStyle(color: Colors.white),
-                        //       ),
-                        //       background: Colors.red,
-                        //     );
-                        //   }
-                        // });
+                            if((startTime != " ")  && (endTime != " ")){
+
+                              var dateFormat = DateFormat('h:ma');
+                              DateTime durationStart = dateFormat.parse(uiStartTime.format(context).toString().replaceAll(" ", ""));
+                              DateTime durationEnd = dateFormat.parse(uiEndTime.format(context).toString().replaceAll(" ", ""));
+                              var differenceInHours = durationEnd.difference(durationStart).toString().split('.')[0];
+
+                              var da = {
+                                'from': startTime,
+                                "to" : endTime,
+                                "name": name,
+                                "time_in_hours": differenceInHours,
+                                "workDone": workDone.text,
+                                "workPercentage": "${percentage.text}%",
+                              };
+                              uploadData(startTime.toString(),endTime.toString(),todaysDate,da);
+
+                              showSimpleNotification(
+                                const Text(
+                                  "Work Submitted successfully",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                background: Colors.green,
+                              );
+                              workDone.clear();
+                              percentage.clear();
+                              uiStartTime = TimeOfDay.now();
+                              uiEndTime = TimeOfDay.now();
+                              // print(da);
+                            }else{
+                              showSimpleNotification(
+                                const Text(
+                                  "please choose time",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                background: Colors.red,
+                              );
+                            }
+                          } else {
+                            showSimpleNotification(
+                              const Text(
+                                "please percentage",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              background: Colors.red,
+                            );
+                          }
+                        });
                       }, child: const Text(" Done ",style: TextStyle(color: Colors.orange),)),
+                ),
+                from.isNotEmpty? ListView.builder(
+                  shrinkWrap: true,
+                itemCount: from.length,
+                itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                    onTap: () {
+                      // turnOffTheHueLight(lightId[index], !lightState[index]);
+                    },
+                    child: Container(
+                        margin: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 13.0,vertical: 18.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(25.0),
+                          // border: Border.all(color: Colors.red)
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("From :  ${from[index]}",textAlign: TextAlign.left,),
+                              Text("To      :  ${to[index]}",textAlign: TextAlign.left,),
+                              Text("Work :   ${workDoneContent[index]}",textAlign: TextAlign.left,),
+                              Text("Percentage : ${workDonePercentage[index]}",textAlign: TextAlign.left,),
+                            ],
+                          ),
+                        )
+                    )
+                );
+                  },
+                ):const Center(
+                  child: Text("No work Entry Registered")
                 )
               ]
           ),

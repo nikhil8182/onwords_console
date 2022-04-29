@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:onwords_console/homePage.dart';
+import 'package:onwords_console/staff_validation_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'data_page.dart';
 import 'login_page.dart';
@@ -31,16 +32,13 @@ class _SplashScreenPageState extends State<SplashScreenPage> with TickerProvider
     // Timer(Duration(seconds: 5), () {
     //   _navigateUser();
     // });
-    _controller = AnimationController(
-      duration: Duration(milliseconds: 500),
-      vsync: this,
-    );
+    _controller = AnimationController(vsync: this);
   }
 
   _navigateUser() async {
     if(!isLoggedIn){
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          context, MaterialPageRoute(builder: (context) => const StaffValidationPage()));
     }else{
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
