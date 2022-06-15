@@ -174,9 +174,6 @@ class _MyAppState extends State<MyApp> {
       //   // print(dataJson[]);
       // }
     });
-
-
-
   }
 
 
@@ -199,71 +196,8 @@ class _MyAppState extends State<MyApp> {
                     // fireData();
                     // testData();
                   }, child: const Text(" Get ",style: TextStyle(fontSize: 12),)),
-
             ],
           ),
-          // body: Column(
-          //   children: [
-          //     Text(combination.split(' ')[0]),
-          //     Text(combination.split(' ')[0]),
-          //   ],
-          // ),
-          //   body: StreamBuilder(
-          //       stream: databaseReference.orderByKey().onValue,
-          //       builder: (context,  AsyncSnapshot<dynamic> snapshot){
-          //         final listTile = <Container>[];//ListTile
-          //         if(snapshot.hasData){
-          //
-          //           final staffDetails = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object?,dynamic>;
-          //               staffDetails.forEach((key, value) {
-          //             final nextOrder  = Map<String,dynamic>.from(value);
-          //             // print(nextOrder.keys);
-          //
-          //            if(nextOrder['workManager'] != null)
-          //            {
-          //              nextOrder['workManager'].forEach((key, value) {
-          //                final work = Map<String,dynamic>.from(value);
-          //                if((work.values) != null){
-          //                  work.forEach((key, value) {
-          //                    final timeSheet = Map<String, dynamic>.from(value);
-          //                    timeSheet.forEach((key, value) {
-          //                         wrkManage =  Map<String, dynamic>.from(value);
-          //                    });
-          //                  });
-          //                }
-          //              });
-          //            }
-          //             final orderTile = Container(
-          //                           margin: EdgeInsets.all(10.0),
-          //                           padding: EdgeInsets.all(18.0),
-          //                           decoration: BoxDecoration(
-          //                             color: Colors.green,
-          //                               borderRadius: BorderRadius.circular(25.0),
-          //                               // border: Border.all(color: Colors.red)
-          //                           ),
-          //                             child: Column(
-          //                               crossAxisAlignment: CrossAxisAlignment.start,
-          //                               children: [
-          //                                 Row(
-          //                                   children: [
-          //                                     Text(nextOrder['name'],textDirection: TextDirection.ltr,),
-          //                                     // Text(workManager[index]??" ")
-          //                                   ],
-          //                                 ),
-          //                                 Text(wrkManage['workPercentage'],textDirection: TextDirection.ltr,),
-          //                                 Text(wrkManage['workDone'],textDirection: TextDirection.ltr,),
-          //                               ],
-          //                             ));
-          //             listTile.add(orderTile);
-          //           });
-          //         }
-          //           return  GridView(gridDelegate:
-          //             const SliverGridDelegateWithFixedCrossAxisCount(
-          //                   crossAxisCount: 2,
-          //                   crossAxisSpacing: 4.0,
-          //                   mainAxisSpacing: 4.0),
-          //           children: listTile);
-          // }
           body: loader ? GridView.builder(
             itemCount: staffName.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
